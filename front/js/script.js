@@ -1,16 +1,19 @@
 
 //Charger produits au chargement de la page
 window.addEventListener("load", () => {
-
-  fetch('http://localhost:3000/api/products')
+async function loadApi(url) {
+  fetch(url)
     .then(res => {
         if(res.ok){
-          res.json()
+          const products = res.json();
+          console.log(products);
         } else {
-          console.log("Erreur fetch API")
+          console.log("Erreur fetch API");
         }
     })
     
-    
+  }
+
+  loadApi("http://localhost:3000/api/products")
 })
 
