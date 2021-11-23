@@ -1,19 +1,14 @@
+import {apiUrl} from "./apiUrl.mjs";
+import {fetchData} from "./fetchData.mjs";
+import {createProductsItems} from "./createProductsItems.mjs";
 
-//Charger produits au chargement de la page
-window.addEventListener("load", () => {
-async function loadApi(url) {
-  fetch(url)
-    .then(res => {
-        if(res.ok){
-          const products = res.json();
-          console.log(products);
-        } else {
-          console.log("Erreur fetch API");
-        }
-    })
-    
-  }
-
-  loadApi("http://localhost:3000/api/products")
+//Charger products au chargement de la page, creer le HTML et l'afficher dans #items
+document.addEventListener("DOMContentLoaded", ()=> {
+  fetchData(`${apiUrl}/products`).then((response)=>{
+    document.querySelector("#items").innerHTML = createProductsItems(response)
+  })
+      
 })
+ 
+
 
