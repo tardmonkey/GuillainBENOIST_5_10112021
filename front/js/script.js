@@ -7,7 +7,9 @@ document.addEventListener("DOMContentLoaded", ()=> {
   fetchData(`${apiUrl}/products`).then((response)=>{
     document.querySelector("#items").innerHTML = createProductsItems(response)
   })
-      
+      let urlCurrent = document.URL
+      let urlId = urlCurrent.substring(urlCurrent.lastIndexOf('/') + 1)
+      console.log(urlId)
 })
  
 
