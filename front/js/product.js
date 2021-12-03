@@ -1,6 +1,8 @@
 import {fetchData} from "./fetchData.mjs"
 import {apiUrl} from "./apiUrl.mjs"
-// import {createHtmlForProducts} from "./createHtmlForProducts.mjs"
+
+
+
 document.addEventListener("DOMContentLoaded", ()=> {
 
     fetchData(`${apiUrl}/products`).then((response)=>{
@@ -24,23 +26,31 @@ document.addEventListener("DOMContentLoaded", ()=> {
               let description = found.description;
               let name = found.name;
               let alt = found.altTxt;
-
-              console.log(found);
+              let productId = found._id;
+              document.querySelector("#addToCart").addEventListener("click", addToCart(productId)); //pourquoi elle self invoke ??
               document.querySelector(".item__img").innerHTML = `<img src="../../back/images/${imgUrl}" alt="${alt}">`;
               document.querySelector("#title").innerHTML = name;
               document.querySelector("#price").innerHTML = prix;
               document.querySelector("#description").innerHTML = description;
-              
               colors.forEach(element => {
-                document.querySelector("#colors").innerHTML = `<option value="${element}">${element}</option>`;
-                console.log(element);
+                document.querySelector("#colors").innerHTML += `<option value="${element}">${element}</option>`;
               });
               
+               
+              
             }
+            
           }
         }
         createPage()
 
+        
+        
 
       })
+
+      function addToCart(productId){
+        localStorage.setItem("itemId",productId);
+        console.log(localStorage.getItem("itemId"));
+       }
 })
