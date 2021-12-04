@@ -1,8 +1,8 @@
 /** 
-             * Creer html 
-             * @param {array} productsArray
-             * @return {html}
-          */
+* Creer html 
+* @param {array} productsArray
+* @return {html}
+*/
  export function createProductsItems(productsArray){
     let html = ""
 

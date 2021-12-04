@@ -1,53 +1,79 @@
-import {fetchData} from "./fetchData.mjs"
-import {apiUrl} from "./apiUrl.mjs"
+import {fetchData} from "./fetchData.mjs";
+import {apiUrl} from "./apiUrl.mjs";
 
-
+/** 
+* Afficher un produit(canape)
+* @return {undefined}
+*/
 
 document.addEventListener("DOMContentLoaded", ()=> {
 
     fetchData(`${apiUrl}/products`).then((response)=>{
         // document.querySelector(".item__img").innerHTML = createHtmlForProducts(response)
-        let res = response;
         let urlParams = new URLSearchParams(document.location.search.substring(1));
         let urlId = urlParams.get("id");
       
+        const product = response.filter((element)=>{
+
+             if(element._id === urlId){
+
+                  return element;
+
+             }
+
+        });
+
+        document.querySelector(".item__img").innerHTML = `<img src="${product[0].imageUrl}" alt="${product[0].altTxt}">`;
+
+        document.querySelector("#title").innerHTML = product[0].name;
+
+        document.querySelector("#price").innerHTML = product[0].price;
+
+        document.querySelector("#description").innerHTML = product[0].description;
+
+        product[0].colors.forEach(color => {
+              document.querySelector("#colors").innerHTML += `<option value="${color}">${color}</option>`;
+        });
+
+        document.querySelector("#addToCart").addEventListener("click", addToCart);
         
-        function createPage(){
-          for(let i = 0; i < response.length; i++){
-            
-            if (response[i]._id === urlId) {
-              const found = response[i];
-              let imgUrl = found.imageUrl;
-              let prix = found.price;
-              let colors = found.colors;
-              let description = found.description;
-              let name = found.name;
-              let alt = found.altTxt;
-              let productId = found._id;
-              document.querySelector("#addToCart").addEventListener("click", addToCart(productId)); //pourquoi elle self invoke ??
-              document.querySelector(".item__img").innerHTML = `<img src="${imgUrl}" alt="${alt}">`;
-              document.querySelector("#title").innerHTML = name;
-              document.querySelector("#price").innerHTML = prix;
-              document.querySelector("#description").innerHTML = description;
-              colors.forEach(element => {
-                document.querySelector("#colors").innerHTML += `<option value="${element}">${element}</option>`;
-              });
+        function addToCart(){
+             
+               const select = document.querySelector("#colors");
+
+               const selectChoice = select.options[select.selectedIndex].text;
+
+               const quantity = document.querySelector("#quantity").value;
+
+               if(selectChoice !== "--SVP, choisissez une couleur --" && quantity > 0 ){
+
+                  const productInfos = {
+
+                    name: product[0].name,
+
+                    price: product[0].price,
+
+                    description: product[0].description,
+
+                    color: selectChoice,
+
+                    quantity: quantity
+
+                  }
+
+                  localStorage.setItem("productInfo", JSON.stringify(productInfos));
+
+                  return document.location.href = "cart.html";
+
+               }
+
+               alert("Choisissez une couleur et une quantite de canape");
               
+
                
-              
-            }
-            
-          }
+          
         }
-        createPage()
 
-        
-        
+      });
 
-      })
-
-      function addToCart(productId){
-        localStorage.setItem("itemId",productId);
-        console.log(localStorage.getItem("itemId"));
-       }
-})
+});
