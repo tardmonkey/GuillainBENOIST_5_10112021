@@ -8,19 +8,16 @@ document.addEventListener("DOMContentLoaded", ()=> {
     fetchData(`${apiUrl}/products`).then((response)=>{
         // document.querySelector(".item__img").innerHTML = createHtmlForProducts(response)
         let res = response;
-        let urlCurrent = document.URL;
-        let urlId = urlCurrent.substring(urlCurrent.lastIndexOf('=') + 1);
-        
+        let urlParams = new URLSearchParams(document.location.search.substring(1));
+        let urlId = urlParams.get("id");
       
         
         function createPage(){
           for(let i = 0; i < response.length; i++){
-            const urlId = urlCurrent.substring(urlCurrent.lastIndexOf('=') + 1);
             
             if (response[i]._id === urlId) {
-              let found;
-              found = response[i];
-              let imgUrl = found.imageUrl.slice(29);
+              const found = response[i];
+              let imgUrl = found.imageUrl;
               let prix = found.price;
               let colors = found.colors;
               let description = found.description;
@@ -28,7 +25,7 @@ document.addEventListener("DOMContentLoaded", ()=> {
               let alt = found.altTxt;
               let productId = found._id;
               document.querySelector("#addToCart").addEventListener("click", addToCart(productId)); //pourquoi elle self invoke ??
-              document.querySelector(".item__img").innerHTML = `<img src="../../back/images/${imgUrl}" alt="${alt}">`;
+              document.querySelector(".item__img").innerHTML = `<img src="${imgUrl}" alt="${alt}">`;
               document.querySelector("#title").innerHTML = name;
               document.querySelector("#price").innerHTML = prix;
               document.querySelector("#description").innerHTML = description;
