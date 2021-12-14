@@ -1,79 +1,113 @@
-import {fetchData} from "./fetchData.mjs";
-import {apiUrl} from "./apiUrl.mjs";
+import { fetchData } from "./fetchData.mjs";
+import { apiUrl } from "./apiUrl.mjs";
 
-/** 
-* Afficher un produit(canape)
-* @return {undefined}
-*/
+/**
+ * Afficher un produit(canape)
+ * @return {undefined}
+ */
 
-document.addEventListener("DOMContentLoaded", ()=> {
+document.addEventListener("DOMContentLoaded", () => {
+  fetchData(`${apiUrl}/products`).then((response) => {
+    // document.querySelector(".item__img").innerHTML = createHtmlForProducts(response)
+    let urlParams = new URLSearchParams(document.location.search.substring(1));
+    let urlId = urlParams.get("id");
 
-    fetchData(`${apiUrl}/products`).then((response)=>{
-        // document.querySelector(".item__img").innerHTML = createHtmlForProducts(response)
-        let urlParams = new URLSearchParams(document.location.search.substring(1));
-        let urlId = urlParams.get("id");
-      
-        const product = response.filter((element)=>{
+    const product = response.filter((element) => {
+      if (element._id === urlId) {
+        return element;
+      }
+    });
 
-             if(element._id === urlId){
+    document.querySelector(
+      ".item__img"
+    ).innerHTML = `<img src="${product[0].imageUrl}" alt="${product[0].altTxt}">`;
 
-                  return element;
+    document.querySelector("#title").innerHTML = product[0].name;
+    document.querySelector("title").innerHTML = product[0].name;
 
-             }
+    document.querySelector("#price").innerHTML = product[0].price;
 
-        });
+    document.querySelector("#description").innerHTML = product[0].description;
 
-        document.querySelector(".item__img").innerHTML = `<img src="${product[0].imageUrl}" alt="${product[0].altTxt}">`;
+    product[0].colors.forEach((color) => {
+      document.querySelector(
+        "#colors"
+      ).innerHTML += `<option value="${color}">${color}</option>`;
+    });
 
-        document.querySelector("#title").innerHTML = product[0].name;
+    document.querySelector("#addToCart").addEventListener("click", addToCart);
 
-        document.querySelector("#price").innerHTML = product[0].price;
+    /**
+     * Ajouter au panier puis redirect
+     * @param
+     * @return cart.html
+     */
+    function addToCart() {
+      const select = document.querySelector("#colors");
 
-        document.querySelector("#description").innerHTML = product[0].description;
+      const selectChoice = select.options[select.selectedIndex].text;
 
-        product[0].colors.forEach(color => {
-              document.querySelector("#colors").innerHTML += `<option value="${color}">${color}</option>`;
-        });
+      const quantity = document.querySelector("#quantity").value;
 
-        document.querySelector("#addToCart").addEventListener("click", addToCart);
-        
-        function addToCart(){
-             
-               const select = document.querySelector("#colors");
+      if (selectChoice !== "--SVP, choisissez une couleur --" && quantity > 0) {
+        if (localStorage.productInfo !== undefined) {
+          const nouvelObjet = {
+            name: product[0].name,
 
-               const selectChoice = select.options[select.selectedIndex].text;
+            price: product[0].price,
 
-               const quantity = document.querySelector("#quantity").value;
+            description: product[0].description,
 
-               if(selectChoice !== "--SVP, choisissez une couleur --" && quantity > 0 ){
+            color: selectChoice,
 
-                  const productInfos = {
+            quantity: quantity,
 
-                    name: product[0].name,
+            imageUrl: product[0].imageUrl,
+          };
 
-                    price: product[0].price,
+          const products = JSON.parse(localStorage.productInfo);
 
-                    description: product[0].description,
+          products.push(nouvelObjet);
 
-                    color: selectChoice,
-
-                    quantity: quantity
-
-                  }
-
-                  localStorage.setItem("productInfo", JSON.stringify(productInfos));
-
-                  return document.location.href = "cart.html";
-
-               }
-
-               alert("Choisissez une couleur et une quantite de canape");
-              
-
-               
+          localStorage.setItem("productInfo", JSON.stringify(products));
           
+          return (document.location.href = "cart.html");
+          
+        } else {
+          const productInfos = [
+            {
+              name: product[0].name,
+
+              price: product[0].price,
+
+              description: product[0].description,
+
+              color: selectChoice,
+
+              quantity: quantity,
+
+              imageUrl: product[0].imageUrl,
+            }
+          ];
+
+          localStorage.setItem("productInfo", JSON.stringify(productInfos));
+
+          return (document.location.href = "cart.html");
         }
 
-      });
-
+      } else if (
+        selectChoice !== "--SVP, choisissez une couleur --" &&
+        quantity <= 0
+      ) {
+        alert("Veuillez indiquer une quantité.");
+      } else if (
+        selectChoice == "--SVP, choisissez une couleur --" &&
+        quantity > 0
+      ) {
+        alert("Veuillez choisir une couleur");
+      } else {
+        alert("Veuillez choisir une couleur et une quantité.");
+      }
+    }
+  });
 });
