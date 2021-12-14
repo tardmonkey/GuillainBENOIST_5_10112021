@@ -38,6 +38,10 @@ document.addEventListener("DOMContentLoaded", () => {
     showProduct(element);
   });
 
+  
+  document.querySelector("#totalPrice").innerHTML = sommeTotal();
+  document.querySelector("#totalQuantity").innerHTML = quantityTotal();
+
   document.querySelectorAll(".deleteItem").forEach((element) => {
     element.addEventListener("click", deleteProduct);
   });
@@ -72,9 +76,6 @@ document.addEventListener("DOMContentLoaded", () => {
       
     //  localStorage.removeItem("productInfo", JSON.stringify(products));
 
-    
-
-    
   }
 
   document.querySelectorAll(".itemQuantity").forEach((element) => {
@@ -114,3 +115,49 @@ document.addEventListener("DOMContentLoaded", () => {
     return (document.location.href = "confirmation.html");
   }
 });
+
+  /**
+   * Calculer le prix total des produits 
+   * dans localStorage("productInfos")
+   * 
+   * @return {number} grandTotal
+   */
+  function sommeTotal(){
+
+  const products = JSON.parse(localStorage.productInfo);
+  const productsTotalPrice = []
+
+  for(let i = 0; products.length>i; i++){
+    let p = products[i].price;
+    let q = products[i].quantity;
+    q = parseInt(q, 10)
+    let totalOfOne = p * q;
+    productsTotalPrice.push(totalOfOne)
+  }
+
+  const reducer = (previousValue, currentValue) => previousValue + currentValue;
+  const grandTotal = productsTotalPrice.reduce(reducer);
+  return grandTotal
+}
+
+/**
+   * Calculer le nombre total de produits 
+   * dans localStorage("productInfos")
+   * 
+   * @return {number} productsTotalQuantity
+   */
+ function quantityTotal(){
+
+  const products = JSON.parse(localStorage.productInfo);
+  let productsTotalQuantity = 0;
+
+  for(let i = 0; products.length>i; i++){
+
+    let productQuantityInt = parseInt(products[i].quantity);
+    productsTotalQuantity += productQuantityInt;
+
+  }
+
+  return productsTotalQuantity
+}
+
