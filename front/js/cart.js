@@ -38,9 +38,7 @@ document.addEventListener("DOMContentLoaded", () => {
     showProduct(element);
   });
 
-  
-  document.querySelector("#totalPrice").innerHTML = sommeTotal();
-  document.querySelector("#totalQuantity").innerHTML = quantityTotal();
+  afficherTotal();
 
   document.querySelectorAll(".deleteItem").forEach((element) => {
     element.addEventListener("click", deleteProduct);
@@ -51,113 +49,159 @@ document.addEventListener("DOMContentLoaded", () => {
    * @param none
    * @return HTML
    */
-   function deleteProduct(clicked) {
+  function deleteProduct(clicked) {
     //  console.log(clicked.path)
     //  clicked.path[4].innerHTML = "";
 
-     const products = JSON.parse(localStorage.productInfo);
-     let clickedHtml = clicked.path[4].innerHTML;
-     
-     let regex = "<h2>(.*?)</h2>";
-     let regexHtmlTags = /(<([^>]+)>)/ig;
-     let searchHtml = clickedHtml.match(regex)
-     let found = searchHtml[0] 
-     let foundWithoutTags = found.replace(regexHtmlTags, "");
-     let searchName = products[0].name;
-    
-     for(let i = 0; products.length > i; i++){
-        if(searchName === foundWithoutTags){
-          console.log(products)
-          products.splice(clicked.path[4])
-          clicked.path[4].innerHTML = "";
-          console.log(products)
-        }
-     }
-      
-    //  localStorage.removeItem("productInfo", JSON.stringify(products));
+    const products = JSON.parse(localStorage.productInfo);
+    let clickedHtml = clicked.path[4].innerHTML;
 
+    let regex = "<h2>(.*?)</h2>";
+    let regexHtmlTags = /(<([^>]+)>)/gi;
+    let searchHtml = clickedHtml.match(regex);
+    let found = searchHtml[0];
+    let foundWithoutTags = found.replace(regexHtmlTags, "");
+    let searchName = products[0].name;
+
+    for (let i = 0; products.length > i; i++) {
+      if (searchName === foundWithoutTags) {
+        console.log(products);
+        products.splice(clicked.path[4]);
+        clicked.path[4].innerHTML = "";
+        console.log(products);
+      }
+    }
+
+    //  localStorage.removeItem("productInfo", JSON.stringify(products));
   }
 
   document.querySelectorAll(".itemQuantity").forEach((element) => {
-    element.addEventListener("change", (recalcSumTotal) => {
-      let newQuantity = document.querySelectorAll(".itemQuantity").value;
-      newQuantity = parseInt(newQuantity, 10);
-      let produits = localStorage.getItem("productInfo");
-      produits = JSON.parse(produits);
-      let productPrice = produits.price;
-      document.querySelector("#totalQuantity").innerHTML = newQuantity;
-      document.querySelector("#totalPrice").innerHTML =
-        productPrice * newQuantity;
-    });
+    element.addEventListener("change", changeQuantity);
   });
 
-  
+  /**
+   * Ajouter/Supprimer quantité d'un objet
+   * Puis changer la valeur dans le localStorage
+   * @param {object} e
+   * @return afficherTotal()
+   */
+  function changeQuantity(e) {
+    let targetParent = e.target.parentNode.parentNode.parentNode;
+    let quantity = e.target.value;
+    let productName = targetParent.querySelector("h2").innerHTML;
+    let products = JSON.parse(localStorage.getItem("productInfo"));
 
-  document
-    .querySelector("#order")
-    .addEventListener("click", confirmerFormulaire);
+    products.forEach((element) => {
+      if (element.name == productName) {
+        console.log(element.quantity);
+
+        element.quantity = quantity;
+
+        console.log(element.quantity);
+
+        const productsString = JSON.stringify(products);
+
+        localStorage.setItem("productInfo", productsString);
+
+        return afficherTotal();
+      }
+    });
+  }
+
+  document.querySelector("#order").addEventListener("click", confirmerFormulaire);
 
   /**
    * Verifier le formulaire puis redirect
    * @param
-   * @return page.html
+   * @return confirmation.html
    */
   function confirmerFormulaire() {
-    /*
-        champ prénom  {string}            id="firstname"
-        champ nom     {string}            id="lastName"
-        champ adresse {string + int}      id="address"
-        champ ville   {string}            id="city"
-        champ email   {string type mail}  id="email"
-        button        {submit}            id="order"
-      
-      */
-    return (document.location.href = "confirmation.html");
+        const alphabet = 'a-zA-ZáàâäãåçéèêëíìîïñóòôöõúùûüýÿæœÁÀÂÄÃÅÇÉÈÊËÍÌÎÏÑÓÒÔÖÕÚÙÛÜÝŸÆŒ';
+        const alphabetEtChiffres = '0-9-a-zA-ZáàâäãåçéèêëíìîïñóòôöõúùûüýÿæœÁÀÂÄÃÅÇÉÈÊËÍÌÎÏÑÓÒÔÖÕÚÙÛÜÝŸÆŒ';
+     
+        const regexAlphabet = new RegExp(`[${alphabet}][${alphabet}' ,"-]*[${alphabet}'",]+`);
+        const regexAlphabetetChiffres = new RegExp(`[${alphabetEtChiffres}][${alphabetEtChiffres}' ,"-]*[${alphabetEtChiffres}'",]+`);
+        const emailRegEx = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+
+        let champPrenom = document.querySelector("#firstName");
+        let champNom = document.querySelector("#lastName");
+        let champVille = document.querySelector("#city");
+        let champAdresse = document.querySelector("#address");
+        let champEmail = document.querySelector("#email");
+        console.log(emailRegEx.test(champEmail.value))
+
+        //Verifie que tout les champs du formulaires sont remplis et correspondent aux regex attendus
+        if(
+        champPrenom.value !== "" && regexAlphabet.test(champPrenom.value) === true && 
+        champNom.value !== "" && regexAlphabet.test(champNom.value) === true &&
+        champVille.value !== "" && regexAlphabet.test(champVille.value) === true && 
+        champAdresse.value !== "" && regexAlphabetetChiffres.test(champAdresse.value) === true &&
+        champEmail.value !== "" && emailRegEx.test(champEmail.value) === true){
+          
+          console.log("C'est bon")
+          return document.location.href = "confirmation.html";
+          
+        }else{
+          alert("Veuillez remplir tout les champs du formulaire")
+        }
+
+        
+        
   }
 });
 
-  /**
-   * Calculer le prix total des produits 
-   * dans localStorage("productInfos")
-   * 
-   * @return {number} grandTotal
-   */
-  function sommeTotal(){
-
+/**
+ * Calculer le prix total des produits
+ * dans localStorage("productInfos")
+ *
+ * @return {number} grandTotal
+ */
+function sommeTotal() {
   const products = JSON.parse(localStorage.productInfo);
-  const productsTotalPrice = []
+  const productsTotalPrice = [];
 
-  for(let i = 0; products.length>i; i++){
+  for (let i = 0; products.length > i; i++) {
     let p = products[i].price;
     let q = products[i].quantity;
-    q = parseInt(q, 10)
+    q = parseInt(q, 10);
     let totalOfOne = p * q;
-    productsTotalPrice.push(totalOfOne)
+    productsTotalPrice.push(totalOfOne);
   }
 
   const reducer = (previousValue, currentValue) => previousValue + currentValue;
   const grandTotal = productsTotalPrice.reduce(reducer);
-  return grandTotal
+  return grandTotal;
 }
 
 /**
-   * Calculer le nombre total de produits 
-   * dans localStorage("productInfos")
-   * 
-   * @return {number} productsTotalQuantity
-   */
- function quantityTotal(){
-
+ * Calculer le nombre total de produits
+ * dans localStorage("productInfos")
+ *
+ * @return {number} productsTotalQuantity
+ */
+function quantityTotal() {
   const products = JSON.parse(localStorage.productInfo);
   let productsTotalQuantity = 0;
 
-  for(let i = 0; products.length>i; i++){
-
+  for (let i = 0; products.length > i; i++) {
     let productQuantityInt = parseInt(products[i].quantity);
     productsTotalQuantity += productQuantityInt;
-
   }
 
-  return productsTotalQuantity
+  return productsTotalQuantity;
 }
 
+/**
+ * Calcule le prix total
+ * Calcule la quantité d'items totale
+ *
+ * @return {HTML}
+ */
+function afficherTotal() {
+  sommeTotal();
+  quantityTotal();
+  return (
+    (document.querySelector("#totalPrice").innerHTML = sommeTotal()),
+    (document.querySelector("#totalQuantity").innerHTML = quantityTotal())
+  );
+}

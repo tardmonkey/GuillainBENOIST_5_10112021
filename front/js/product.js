@@ -52,6 +52,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (selectChoice !== "--SVP, choisissez une couleur --" && quantity > 0) {
         if (localStorage.productInfo !== undefined) {
           const nouvelObjet = {
+
             name: product[0].name,
 
             price: product[0].price,
@@ -63,6 +64,7 @@ document.addEventListener("DOMContentLoaded", () => {
             quantity: quantity,
 
             imageUrl: product[0].imageUrl,
+            
           };
 
           const products = JSON.parse(localStorage.productInfo);
@@ -73,7 +75,17 @@ document.addEventListener("DOMContentLoaded", () => {
           
           return (document.location.href = "cart.html");
           
-        } else {
+        // }else if(0 = 0){
+        //   let ls = JSON.parse(localStorage.getItem("productInfo"));
+        //   let nom = ls[0].name;
+        //   let quantity = parseInt(ls[0].quantity)
+        //   console.log(nom)
+        //   if (ls[0].name !== ""){ //si le nom du Kanap existe dans la liste
+        //     ls[0].quantity = quantity + 1; //augmenter la quantité
+           
+        //   }
+        }
+         else {
           const productInfos = [
             {
               name: product[0].name,
@@ -110,4 +122,6 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
   });
+
+  
 });
