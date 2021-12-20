@@ -38,53 +38,58 @@ document.addEventListener("DOMContentLoaded", () => {
     showProduct(element);
   });
 
+  //Affiche quantité et prix totaux
   afficherTotal();
 
-  //On ajoute la function suppression sur chaque <p>Supprimer</p>
-  document.querySelectorAll(".deleteItem").forEach((element) => {
-
-    //On invoke une arrow function qui return une function pour éviter qu'elle se self-invoke
-    element.addEventListener("click", () => deleteProduct(product, element));
-
-  });
-
   /**
-   * Supprimer produit du panier
+   * Supprimer canap du panier
+   * Supprimer la valeur dans le localStorage
+   * Supprimer le HTML concerné
    * @param {Array of objects} cart
-   * @param {Object} element
-   * @return 
+   * @return afficherTotal()
    */
-  function deleteProduct(cart, element) {
-      let e = element.parentNode.parentNode.parentNode
-      console.log(cart)
-      console.log(e)
-      //Supprime l'element selectionné dans cart
-      // cart.splice(element, 1)
+  function deleteProduct(cart){
 
-      
-      //Met à jour le localStorage avec le nouveau tableau cart
-      // localStorage.setItem('productInfo', JSON.stringify(cart))
+    //Object avec la nodelist des objects classes .deleteItem
+    let deleteItems = document.querySelectorAll('.deleteItem');
     
+    //
+    //Besoin de cette boucle plutôt qu'un foreach pour avoir la position de l'element cliqué 
+    //
+    for(let i = 0; i < deleteItems.length; i++){
 
-    
+      //Ajouter l'écoute click sur chaque <p>Supprimer</p>
+      deleteItems[i].addEventListener("click", ()=>{
+        
+        //SUpprime l'element selectionné du array cart
+        cart.splice(i, 1)
 
-    //Supprime <article> selectionné
-    // element.closest('.cart__item').remove()
+        //Mets à jour le localStoage avec le novueau cart
+        localStorage.setItem('productInfo', JSON.stringify(cart))
 
-    return afficherTotal();
-    
+        //supprime HTML
+        deleteItems[i].closest(".cart__item").remove()
+
+        //recalcul du total
+        afficherTotal()
+        
+      })
+    }
   }
+
+    
+
+
+
+ //Invoke fonction pour supprimer un produit du panier
+ deleteProduct(product);
+
 
   document.querySelectorAll(".itemQuantity").forEach((element) => {
     element.addEventListener("change", changeQuantity);
   });
 
-  /**
-   * Ajouter/Supprimer quantité d'un objet
-   * Puis changer la valeur dans le localStorage
-   * @param {object} e
-   * @return afficherTotal()
-   */
+  
   function changeQuantity(e) {
     let targetParent = e.target.parentNode.parentNode.parentNode;
     let quantity = e.target.value;
@@ -107,6 +112,8 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
   }
+
+ 
 
   document.querySelector("#order").addEventListener("click", function (e){
     //Supprime le comportement par défaut du submit
