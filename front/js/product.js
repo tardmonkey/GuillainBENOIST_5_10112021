@@ -75,12 +75,12 @@ document.addEventListener("DOMContentLoaded", () => {
           
           return (document.location.href = "cart.html");
           
-        // }else if(0 = 0){
+        // }else if{
         //   let ls = JSON.parse(localStorage.getItem("productInfo"));
         //   let nom = ls[0].name;
         //   let quantity = parseInt(ls[0].quantity)
         //   console.log(nom)
-        //   if (ls[0].name !== ""){ //si le nom du Kanap existe dans la liste
+        //   if (ls[0].name !== "" && ls ){ //si le nom du Kanap existe dans la liste
         //     ls[0].quantity = quantity + 1; //augmenter la quantité
            
         //   }

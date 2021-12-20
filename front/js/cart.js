@@ -40,39 +40,39 @@ document.addEventListener("DOMContentLoaded", () => {
 
   afficherTotal();
 
+  //On ajoute la function suppression sur chaque <p>Supprimer</p>
   document.querySelectorAll(".deleteItem").forEach((element) => {
-    element.addEventListener("click", deleteProduct);
+
+    //On invoke une arrow function qui return une function pour éviter qu'elle se self-invoke
+    element.addEventListener("click", () => deleteProduct(product, element));
+
   });
 
   /**
    * Supprimer produit du panier
-   * @param none
-   * @return HTML
+   * @param {Array of objects} cart
+   * @param {Object} element
+   * @return 
    */
-  function deleteProduct(clicked) {
-    //  console.log(clicked.path)
-    //  clicked.path[4].innerHTML = "";
+  function deleteProduct(cart, element) {
+      let e = element.parentNode.parentNode.parentNode
+      console.log(cart)
+      console.log(e)
+      //Supprime l'element selectionné dans cart
+      // cart.splice(element, 1)
 
-    const products = JSON.parse(localStorage.productInfo);
-    let clickedHtml = clicked.path[4].innerHTML;
+      
+      //Met à jour le localStorage avec le nouveau tableau cart
+      // localStorage.setItem('productInfo', JSON.stringify(cart))
+    
 
-    let regex = "<h2>(.*?)</h2>";
-    let regexHtmlTags = /(<([^>]+)>)/gi;
-    let searchHtml = clickedHtml.match(regex);
-    let found = searchHtml[0];
-    let foundWithoutTags = found.replace(regexHtmlTags, "");
-    let searchName = products[0].name;
+    
 
-    for (let i = 0; products.length > i; i++) {
-      if (searchName === foundWithoutTags) {
-        console.log(products);
-        products.splice(clicked.path[4]);
-        clicked.path[4].innerHTML = "";
-        console.log(products);
-      }
-    }
+    //Supprime <article> selectionné
+    // element.closest('.cart__item').remove()
 
-    //  localStorage.removeItem("productInfo", JSON.stringify(products));
+    return afficherTotal();
+    
   }
 
   document.querySelectorAll(".itemQuantity").forEach((element) => {
@@ -108,47 +108,81 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  document.querySelector("#order").addEventListener("click", confirmerFormulaire);
+  document.querySelector("#order").addEventListener("click", function (e){
+    //Supprime le comportement par défaut du submit
+    e.preventDefault();
 
-  /**
-   * Verifier le formulaire puis redirect
-   * @param
-   * @return confirmation.html
-   */
-  function confirmerFormulaire() {
-        const alphabet = 'a-zA-ZáàâäãåçéèêëíìîïñóòôöõúùûüýÿæœÁÀÂÄÃÅÇÉÈÊËÍÌÎÏÑÓÒÔÖÕÚÙÛÜÝŸÆŒ';
-        const alphabetEtChiffres = '0-9-a-zA-ZáàâäãåçéèêëíìîïñóòôöõúùûüýÿæœÁÀÂÄÃÅÇÉÈÊËÍÌÎÏÑÓÒÔÖÕÚÙÛÜÝŸÆŒ';
-     
-        const regexAlphabet = new RegExp(`[${alphabet}][${alphabet}' ,"-]*[${alphabet}'",]+`);
-        const regexAlphabetetChiffres = new RegExp(`[${alphabetEtChiffres}][${alphabetEtChiffres}' ,"-]*[${alphabetEtChiffres}'",]+`);
-        const emailRegEx = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    //Regex
+    const alphabet =
+      "a-zA-ZáàâäãåçéèêëíìîïñóòôöõúùûüýÿæœÁÀÂÄÃÅÇÉÈÊËÍÌÎÏÑÓÒÔÖÕÚÙÛÜÝŸÆŒ";
+    const alphabetEtChiffres =
+      "0-9-a-zA-ZáàâäãåçéèêëíìîïñóòôöõúùûüýÿæœÁÀÂÄÃÅÇÉÈÊËÍÌÎÏÑÓÒÔÖÕÚÙÛÜÝŸÆŒ";
+    const regexAlphabet = new RegExp(
+      `[${alphabet}][${alphabet}' ,"-]*[${alphabet}'",]+`
+    );
+    const regexAlphabetetChiffres = new RegExp(
+      `[${alphabetEtChiffres}][${alphabetEtChiffres}' ,"-]*[${alphabetEtChiffres}'",]+`
+    );
+    const emailRegex =
+      /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
-        let champPrenom = document.querySelector("#firstName");
-        let champNom = document.querySelector("#lastName");
-        let champVille = document.querySelector("#city");
-        let champAdresse = document.querySelector("#address");
-        let champEmail = document.querySelector("#email");
-        console.log(emailRegEx.test(champEmail.value))
+    //Query tout les champs dans des variables
+    let champPrenom = document.querySelector("#firstName");
+    let champNom = document.querySelector("#lastName");
+    let champVille = document.querySelector("#city");
+    let champAdresse = document.querySelector("#address");
+    let champEmail = document.querySelector("#email");
 
-        //Verifie que tout les champs du formulaires sont remplis et correspondent aux regex attendus
-        if(
-        champPrenom.value !== "" && regexAlphabet.test(champPrenom.value) === true && 
-        champNom.value !== "" && regexAlphabet.test(champNom.value) === true &&
-        champVille.value !== "" && regexAlphabet.test(champVille.value) === true && 
-        champAdresse.value !== "" && regexAlphabetetChiffres.test(champAdresse.value) === true &&
-        champEmail.value !== "" && emailRegEx.test(champEmail.value) === true){
-          
-          console.log("C'est bon")
-          return document.location.href = "confirmation.html";
-          
-        }else{
-          alert("Veuillez remplir tout les champs du formulaire")
-        }
+    // Test pendant l'input si le résultat attendu est le bon.
+    // False = affiche la div avec une erreur
+    // True = Supprime le contenu de la div
+    !regexAlphabet.test(champPrenom.value)
+      ? (champPrenom.nextElementSibling.innerHTML =
+          "Veuillez entrer votre Prénom")
+      : (champPrenom.nextElementSibling.innerHTML = "");
 
-        
-        
-  }
-});
+    !regexAlphabet.test(champNom.value)
+      ? (champNom.nextElementSibling.innerHTML = "Veuillez entrer votre Nom")
+      : (champNom.nextElementSibling.innerHTML = "");
+
+    !regexAlphabet.test(champVille.value)
+      ? (champVille.nextElementSibling.innerHTML =
+          "Veuillez entrer votre Adresse")
+      : (champVille.nextElementSibling.innerHTML = "");
+
+    !regexAlphabetetChiffres.test(champAdresse.value)
+      ? (champAdresse.nextElementSibling.innerHTML =
+          "Veuillez entrer votre Adresse")
+      : (champAdresse.nextElementSibling.innerHTML = "");
+
+    !emailRegex.test(champEmail.value)
+      ? (champEmail.nextElementSibling.innerHTML =
+          "Veuillez entrer votre adresse mail")
+      : (champEmail.nextElementSibling.innerHTML = "");
+
+    // Verifie que tout les champs du formulaires sont remplis
+    // Et que les inputs correspondent aux regex attendus
+    if (
+      champPrenom.value !== "" &&
+      regexAlphabet.test(champPrenom.value) === true &&
+      champNom.value !== "" &&
+      regexAlphabet.test(champNom.value) === true &&
+      champVille.value !== "" &&
+      regexAlphabet.test(champVille.value) === true &&
+      champAdresse.value !== "" &&
+      regexAlphabetetChiffres.test(champAdresse.value) === true &&
+      champEmail.value !== "" &&
+      emailRegex.test(champEmail.value) === true
+    ) {
+      console.log("C'est bon");
+      return (document.location.href = "confirmation.html");
+    } else {
+    }
+  })
+    
+    
+   
+ 
 
 /**
  * Calculer le prix total des produits
@@ -159,18 +193,30 @@ document.addEventListener("DOMContentLoaded", () => {
 function sommeTotal() {
   const products = JSON.parse(localStorage.productInfo);
   const productsTotalPrice = [];
+  
+  
+  
+      for (let i = 0; products.length > i; i++) {
+        let p = products[i].price;
+        let q = products[i].quantity;
+        q = parseInt(q, 10);
+        let totalOfOne = p * q;
+        productsTotalPrice.push(totalOfOne);
+      }
+      
+      //Si notre array productsTotalPrice est vide, on peut afficher 0 articles 0€
+      if(productsTotalPrice.length === 0){
 
-  for (let i = 0; products.length > i; i++) {
-    let p = products[i].price;
-    let q = products[i].quantity;
-    q = parseInt(q, 10);
-    let totalOfOne = p * q;
-    productsTotalPrice.push(totalOfOne);
-  }
-
-  const reducer = (previousValue, currentValue) => previousValue + currentValue;
-  const grandTotal = productsTotalPrice.reduce(reducer);
-  return grandTotal;
+        return (document.querySelector("#totalPrice").innerHTML = 0),
+               (document.querySelector("#totalQuantity").innerHTML = 0)
+  
+      }else{
+        const reducer = (previousValue, currentValue) => previousValue + currentValue;
+        const grandTotal = productsTotalPrice.reduce(reducer);
+        return grandTotal;
+      }
+        
+    
 }
 
 /**
@@ -205,3 +251,5 @@ function afficherTotal() {
     (document.querySelector("#totalQuantity").innerHTML = quantityTotal())
   );
 }
+
+})
