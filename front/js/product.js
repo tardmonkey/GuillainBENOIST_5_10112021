@@ -69,6 +69,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
           for (let i = 0; i < products.length; i++){
             
+            //Si la couleur et le nom existe déjà dans le localstorage
             if(products[i].color == selectChoice && products[i].name == name){
 
               let qteProduits = products[i].quantity; 
@@ -86,9 +87,9 @@ document.addEventListener("DOMContentLoaded", () => {
               products[i].quantity = qteProduits;
 
               //On écrase localstorage avec le nouveau tableau products
-              localStorage.setItem("productInfo", JSON.stringify(products));
+              // localStorage.setItem("productInfo", JSON.stringify(products));
               
-              return (document.location.href = "cart.html");
+              // return (document.location.href = "cart.html");
             }else{
               
                 const nouvelObjet = {
@@ -113,7 +114,7 @@ document.addEventListener("DOMContentLoaded", () => {
               //On écrase localstorage avec le nouveau tableau products
               localStorage.setItem("productInfo", JSON.stringify(products));
               
-              return (document.location.href = "cart.html");
+              // return (document.location.href = "cart.html");
     
             }
           }
