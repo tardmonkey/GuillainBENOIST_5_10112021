@@ -43,49 +43,85 @@ document.addEventListener("DOMContentLoaded", () => {
      * @return cart.html
      */
     function addToCart() {
+
+      
+
       const select = document.querySelector("#colors");
 
+      //Value couleur choisie
       const selectChoice = select.options[select.selectedIndex].text;
 
+      //Value quantité choisie
       const quantity = document.querySelector("#quantity").value;
 
+      //Nom du canapé sur cette page
+      const name = document.querySelector("#title").innerHTML;
+
+      //Si on a choisi une couleur et une quantité 
       if (selectChoice !== "--SVP, choisissez une couleur --" && quantity > 0) {
+
+        //Si productInfo existe déjà dans le localStorage
         if (localStorage.productInfo !== undefined) {
-          const nouvelObjet = {
+          
 
-            name: product[0].name,
-
-            price: product[0].price,
-
-            description: product[0].description,
-
-            color: selectChoice,
-
-            quantity: quantity,
-
-            imageUrl: product[0].imageUrl,
-            
-          };
-
+          //Récupère productInfo dans localStorage pour la manipulation
           const products = JSON.parse(localStorage.productInfo);
 
-          products.push(nouvelObjet);
+          for (let i = 0; i < products.length; i++){
+            
+            if(products[i].color == selectChoice && products[i].name == name){
 
-          localStorage.setItem("productInfo", JSON.stringify(products));
+              let qteProduits = products[i].quantity; 
+
+              //Transforme string qteProduits en integer
+              qteProduits = parseInt(qteProduits, 10);
+
+              //Transforme string quantity en integer quantityInt
+              let quantityInt = parseInt(quantity, 10);
+
+              //On additionne le tout
+              qteProduits = quantityInt + qteProduits;
+              
+              //On écrase la quantité par notre nouveau total
+              products[i].quantity = qteProduits;
+
+              //On écrase localstorage avec le nouveau tableau products
+              localStorage.setItem("productInfo", JSON.stringify(products));
+              
+              return (document.location.href = "cart.html");
+            }else{
+              
+                const nouvelObjet = {
+
+                  name: product[0].name,
+      
+                  price: product[0].price,
+      
+                  description: product[0].description,
+      
+                  color: selectChoice,
+      
+                  quantity: quantity,
+      
+                  imageUrl: product[0].imageUrl,
+                  
+                };
+    
+              //On ajoute le nouvel objet dans le tableau
+              products.push(nouvelObjet);
+    
+              //On écrase localstorage avec le nouveau tableau products
+              localStorage.setItem("productInfo", JSON.stringify(products));
+              
+              return (document.location.href = "cart.html");
+    
+            }
+          }
           
-          return (document.location.href = "cart.html");
-          
-        // }else if{
-        //   let ls = JSON.parse(localStorage.getItem("productInfo"));
-        //   let nom = ls[0].name;
-        //   let quantity = parseInt(ls[0].quantity)
-        //   console.log(nom)
-        //   if (ls[0].name !== "" && ls ){ //si le nom du Kanap existe dans la liste
-        //     ls[0].quantity = quantity + 1; //augmenter la quantité
-           
-        //   }
         }
-         else {
+        
+        //Si productInfo n'existe pas dans le localStorage
+        else {
           const productInfos = [
             {
               name: product[0].name,
@@ -104,7 +140,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
           localStorage.setItem("productInfo", JSON.stringify(productInfos));
 
-          return (document.location.href = "cart.html");
+          // return (document.location.href = "cart.html");
         }
 
       } else if (
