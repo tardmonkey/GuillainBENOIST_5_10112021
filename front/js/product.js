@@ -44,7 +44,8 @@ document.addEventListener("DOMContentLoaded", () => {
      */
     function addToCart() {
 
-      
+      let products = localStorage.getItem("productInfo");
+      products = JSON.parse(products)
 
       const select = document.querySelector("#colors");
 
@@ -62,64 +63,68 @@ document.addEventListener("DOMContentLoaded", () => {
 
         //Si productInfo existe déjà dans le localStorage
         if (localStorage.productInfo !== undefined) {
+
+        const quantityOfSameProduct = []
           
+        for (let i = 0; i < products.length; i++){
 
-          //Récupère productInfo dans localStorage pour la manipulation
-          const products = JSON.parse(localStorage.productInfo);
+          //Si la couleur et le nom existe déjà dans le localstorage
+          if(products[i].color == selectChoice && products[i].name == name){
 
-          for (let i = 0; i < products.length; i++){
+            //Transforme la quantité du produit en integer
+            let productsInt = parseInt(products[i].quantity)
+
+
+            //Transforme la quantité séléctionné en integer
+            let quantityInt = parseInt(quantity);
+
+            quantityOfSameProduct.push(productsInt)
+            quantityOfSameProduct.push(quantityInt)
+
+
+            const reducer = (accumulator, curr) => accumulator + curr;
+
+            //Additionne chaque entrée du array 
+            let newQuantity = quantityOfSameProduct.reduce(reducer);
+             
+
+            product[i].quantity = newQuantity;
+
+            return  localStorage.setItem("productInfo", JSON.stringify(products));
             
-            //Si la couleur et le nom existe déjà dans le localstorage
-            if(products[i].color == selectChoice && products[i].name == name){
-
-              let qteProduits = products[i].quantity; 
-
-              //Transforme string qteProduits en integer
-              qteProduits = parseInt(qteProduits, 10);
-
-              //Transforme string quantity en integer quantityInt
-              let quantityInt = parseInt(quantity, 10);
-
-              //On additionne le tout
-              qteProduits = quantityInt + qteProduits;
-              
-              //On écrase la quantité par notre nouveau total
-              products[i].quantity = qteProduits;
-
-              //On écrase localstorage avec le nouveau tableau products
-              // localStorage.setItem("productInfo", JSON.stringify(products));
-              
-              // return (document.location.href = "cart.html");
-            }else{
-              
-                const nouvelObjet = {
-
-                  name: product[0].name,
-      
-                  price: product[0].price,
-      
-                  description: product[0].description,
-      
-                  color: selectChoice,
-      
-                  quantity: quantity,
-      
-                  imageUrl: product[0].imageUrl,
-                  
-                };
-    
-              //On ajoute le nouvel objet dans le tableau
-              products.push(nouvelObjet);
-    
-              //On écrase localstorage avec le nouveau tableau products
-              localStorage.setItem("productInfo", JSON.stringify(products));
-              
-              // return (document.location.href = "cart.html");
-    
-            }
           }
-          
+            
         }
+          
+          const nouvelObjet = {
+
+            name: product[0].name,
+
+            price: product[0].price,
+
+            description: product[0].description,
+
+            color: selectChoice,
+
+            quantity: quantity,
+
+            imageUrl: product[0].imageUrl,
+            
+          };
+
+        
+
+         //On ajoute le nouvel objet dans le tableau
+        products.push(nouvelObjet)
+
+        //Supprime les doublons
+        const productsSet = [...new Set(products.map(a => JSON.stringify(a)))].map(a => JSON.parse(a))
+          
+        //On écrase localstorage avec le nouveau tableau productsSet
+        localStorage.setItem("productInfo", JSON.stringify(productsSet));
+
+        
+      }
         
         //Si productInfo n'existe pas dans le localStorage
         else {
@@ -160,5 +165,11 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  
+    
+
+
+
+
 });
+
+
