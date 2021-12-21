@@ -87,9 +87,9 @@ document.addEventListener("DOMContentLoaded", () => {
             //Additionne chaque entrée du array 
             let newQuantity = quantityOfSameProduct.reduce(reducer);
              
-
-            product[i].quantity = newQuantity;
-
+            console.log(products[i].quantity)
+            products[i].quantity = newQuantity;
+            console.log(products[i].quantity)
             return  localStorage.setItem("productInfo", JSON.stringify(products));
             
           }
