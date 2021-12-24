@@ -99,11 +99,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     products.forEach((element) => {
       if (element.name == productName) {
-        console.log(element.quantity);
-
-        element.quantity = quantity;
-
-        console.log(element.quantity);
+        
+        element.quantity = quantity;     
 
         const productsString = JSON.stringify(products);
 
@@ -185,12 +182,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
       //On construit l'array de strings products-ID attendu par l'API
       const produitsID = product.map((product) => {
-
+        
         return product.id;
       
       })
       
-
       /**
        * Construction de la requête pour l'API
        * 
@@ -201,22 +197,23 @@ document.addEventListener("DOMContentLoaded", () => {
       **/
       let dataForAPI = {
         contact: {
-          firstName :  champPrenom.value,
-          lastName  :  champNom.value,
-          adress    :  champAdresse.value,
-          city      :  champVille.value,
-          email     :  champEmail.value
+          firstName: champPrenom.value,
+          lastName: champNom.value,
+          address: champAdresse.value,
+          city: champVille.value,
+          email: champEmail.value
         },
         products: produitsID
       }
 
-      console.log("typeof dataForAPI : " + typeof dataForAPI);
-      console.log("typeof champPrenom.value, : " + typeof champPrenom.value,);
-      console.log("typeof champAdresse.value, : " + typeof champAdresse.value,);
-      console.log("typeof champNom.value, : " + typeof champNom.value,);
-      console.log("typeof champVille.value, : " + typeof champVille.value,);
-      console.log("typeof champEmail.value, : " + typeof champEmail.value,);
-
+      // console.log("typeof dataForAPI : " + typeof dataForAPI);
+      // console.log("typeof champPrenom.value, : " + typeof champPrenom.value);
+      // console.log("typeof champAdresse.value, : " + typeof champAdresse.value);
+      // console.log("typeof champNom.value, : " + typeof champNom.value);
+      // console.log("typeof champVille.value, : " + typeof champVille.value);
+      // console.log("typeof champEmail.value, : " + typeof champEmail.value);
+      // console.log("typeof productsIDs, : " + typeof produitsID)
+      
       sendData(dataForAPI);
       
     } else {
@@ -293,36 +290,40 @@ function afficherTotal() {
   );
 }
 
-})
+
 
 /**
  * Envoie les data à l'API
  *  route  : /order
  *  method : POST
  *  @param {JSON} data
- * @return {HTML} confirmation.html
+ *  @return {HTML} confirmation.html
  */
 function sendData(data){
 
-  fetch("http://localhost:3000/api/product/order",
+  fetch("http://localhost:3000/api/products/order",
   {
 
     method: "POST",
 
-    // headers: {
-    //   "Accept": "application/json",
-    //   "Content-type": "application/json"
-    // },
-
+    headers: {"Content-type": "application/json","Accept": "application/json"},
     
     body: JSON.stringify(data)
+    
   })
-  .then((response) => response.json())
-  .then((data => {
-    console.log(data.orderId)
-    // document.location.href = `confirmation.html?order=${data.orderId}`;
-  }))
   
+  .then((response) => response.json())
 
+  .then((data) => {
+    localStorage.setItem("orderId", data.orderId) ;
+    document.location.href = `confirmation.html?order=${data.orderId}`;
+
+  })
+  
 }
 
+  
+  
+  
+
+})
