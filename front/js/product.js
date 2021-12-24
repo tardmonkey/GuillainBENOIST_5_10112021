@@ -109,6 +109,8 @@ document.addEventListener("DOMContentLoaded", () => {
             quantity: quantity,
 
             imageUrl: product[0].imageUrl,
+
+            id: product[0]._id
             
           };
 
@@ -123,7 +125,7 @@ document.addEventListener("DOMContentLoaded", () => {
         //On écrase localstorage avec le nouveau tableau productsSet
         localStorage.setItem("productInfo", JSON.stringify(productsSet));
 
-        
+        return (document.location.href = "cart.html");
       }
         
         //Si productInfo n'existe pas dans le localStorage
@@ -141,12 +143,14 @@ document.addEventListener("DOMContentLoaded", () => {
               quantity: quantity,
 
               imageUrl: product[0].imageUrl,
+
+              id: product[0]._id
             }
           ];
 
           localStorage.setItem("productInfo", JSON.stringify(productInfos));
 
-          // return (document.location.href = "cart.html");
+          return (document.location.href = "cart.html");
         }
 
       } else if (

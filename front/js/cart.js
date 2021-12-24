@@ -32,6 +32,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   let product = localStorage.getItem("productInfo");
 
+
   product = JSON.parse(product);
 
   product.forEach((element) => {
@@ -180,16 +181,49 @@ document.addEventListener("DOMContentLoaded", () => {
       regexAlphabetetChiffres.test(champAdresse.value) === true &&
       champEmail.value !== "" &&
       emailRegex.test(champEmail.value) === true
-    ) {
-      console.log("C'est bon");
-      return (document.location.href = "confirmation.html");
+    ){
+
+      //On construit l'array de strings products-ID attendu par l'API
+      const produitsID = product.map((product) => {
+
+        return product.id;
+      
+      })
+      
+
+      /**
+       * Construction de la requête pour l'API
+       * 
+       * Requête JSON contenant un objet de contact et un tableau de produits
+       * param : /order
+       * method : POST
+       * Retourne l'objet contact, le tableau produits et orderId (string)
+      **/
+      let dataForAPI = {
+        contact: {
+          firstName :  champPrenom.value,
+          lastName  :  champNom.value,
+          adress    :  champAdresse.value,
+          city      :  champVille.value,
+          email     :  champEmail.value
+        },
+        products: produitsID
+      }
+
+      console.log("typeof dataForAPI : " + typeof dataForAPI);
+      console.log("typeof champPrenom.value, : " + typeof champPrenom.value,);
+      console.log("typeof champAdresse.value, : " + typeof champAdresse.value,);
+      console.log("typeof champNom.value, : " + typeof champNom.value,);
+      console.log("typeof champVille.value, : " + typeof champVille.value,);
+      console.log("typeof champEmail.value, : " + typeof champEmail.value,);
+
+      sendData(dataForAPI);
+      
     } else {
+      alert("Veuillez remplir le formulaire.")
     }
   })
     
-    
-   
- 
 
 /**
  * Calculer le prix total des produits
@@ -260,3 +294,35 @@ function afficherTotal() {
 }
 
 })
+
+/**
+ * Envoie les data à l'API
+ *  route  : /order
+ *  method : POST
+ *  @param {JSON} data
+ * @return {HTML} confirmation.html
+ */
+function sendData(data){
+
+  fetch("http://localhost:3000/api/product/order",
+  {
+
+    method: "POST",
+
+    // headers: {
+    //   "Accept": "application/json",
+    //   "Content-type": "application/json"
+    // },
+
+    
+    body: JSON.stringify(data)
+  })
+  .then((response) => response.json())
+  .then((data => {
+    console.log(data.orderId)
+    // document.location.href = `confirmation.html?order=${data.orderId}`;
+  }))
+  
+
+}
+
